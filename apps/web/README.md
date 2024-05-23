@@ -1,3 +1,8 @@
+## Heads up!
+
+For more detailed instructions and guidelines, please check out the README in the root of the project. It contains comprehensive information to help you get started and make the most out of this project.
+
+
 ## Getting Started
 
 First, run the development server:
