@@ -11,7 +11,20 @@ datasource db {
 }
 
 model User {
-  id    Int     @id @default(autoincrement())
-  email String  @unique
-  name  String?
+  id       Int      @id @default(autoincrement())
+  email    String   @unique
+  name     String?
+  balance  Int      @default(0)
+  sent     Transfer[] @relation("SentTransfers")
+  received Transfer[] @relation("ReceivedTransfers")
+}
+
+model Transfer {
+  id         Int    @id @default(autoincrement())
+  amount     Int
+  senderId   Int
+  receiverId Int
+  sender     User   @relation("SentTransfers", fields: [senderId], references: [id])
+  receiver   User   @relation("ReceivedTransfers", fields: [receiverId], references: [id])
+  createdAt  DateTime @default(now())
 }
