@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
-import { Button } from "ui/components/Button/Button";
 import { v4 as uuidv4 } from 'uuid';
 
 
 
 export default function Web() {
-  // const { data: balanceData, refetch } = useGetBalanceQuery();
+
   const [receiverId, setReceiverId] = useState("");
   const [senderId, setSenderId] = useState("");
   const [amount, setAmount] = useState("");
@@ -74,35 +73,6 @@ export default function Web() {
     }
   };
 
-  const handleCreateUser = async () => {
-    try {
-      const response = await fetch('/api/users', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ id: senderId, balance: Number(amount) }),
-      });
-      const data = await response.json();
-      console.log(data);
-      setUsers([...users, { id: senderId, balance: Number(amount) }]);
-    } catch (error) {
-      console.error('Failed to create user:', error);
-    }
-  };
-
-
-  const fetchBalance = async (userId: string) => {
-    try {
-      const response = await fetch(`/api/satsend/balance/${userId}`);
-      const data = await response.json();
-      return data.balance;
-    } catch (error) {
-      console.error('Failed to fetch balance:', error);
-      throw error;
-    }
-  };
-
   const sendSatoshi = async (senderId: string, receiverId: string, amount: number) => {
     try {
       const response = await fetch('/api/satsend/send', {
@@ -117,17 +87,6 @@ export default function Web() {
       return data.message;
     } catch (error) {
       console.error('Failed to send satoshi:', error);
-      throw error;
-    }
-  };
-
-  const fetchUsers = async () => {
-    try {
-      const response = await fetch('/api/satsend/users');
-      const data = await response.json();
-      return data.users;
-    } catch (error) {
-      console.error('Failed to fetch users:', error);
       throw error;
     }
   };
