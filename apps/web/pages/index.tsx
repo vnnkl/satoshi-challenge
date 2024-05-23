@@ -25,8 +25,7 @@ export default function Web() {
     }
 
     try {
-      //await sendTokens({ receiverId, amount: Number(amount) }).unwrap();
-      // refetch();
+      await sendSatoshi(senderId, receiverId, Number(amount));  
       setReceiverId("");
       setAmount("");
       setError("");
@@ -39,6 +38,7 @@ export default function Web() {
     const fetchUsers = async () => {
       try {
         const response = await fetch('/api/users');
+        console.log('fetchUsers response', response);
         const data = await response.json();
         console.log('data from fetchUsers', data);
         setUsers(data.users);
@@ -99,6 +99,7 @@ export default function Web() {
         },
         body: JSON.stringify({ senderId, receiverId, amount }),
       });
+      console.log("sendSatoshi response", response);
       const data = await response.json();
       return data.message;
     } catch (error) {
@@ -128,6 +129,7 @@ export default function Web() {
         },
         body: JSON.stringify({ userId: userId }),
       });
+      console.log('faucetSatoshi response', response);
       const data = await response.json();
       return data.message;
     } catch (error) {
@@ -183,7 +185,8 @@ export default function Web() {
             onChange={(e) => setAmount(e.target.value.replace(/\D/g, ''))}
             className="border p-2"
           />
-          <Button>Send</Button>
+          <button className="pointer-events-auto rounded-md bg-indigo-600 px-3 py-2 text-[0.8125rem] font-semibold leading-5 text-white hover:bg-indigo-500"
+            onClick={handleSendTokens}>Send</button>
         </div>
         {error && <p style={{ color: "red" }}>{error}</p>}
 
