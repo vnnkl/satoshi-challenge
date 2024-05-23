@@ -57,6 +57,13 @@ export default function Web() {
     updateCurrentUserBalance();
   }, [users]);
 
+  /**
+   * Refreshes the balance of the current user by fetching the latest user data from the server.
+   * Updates the users state and the current user's balance.
+   * @async
+   * @function handleRefreshBalance
+   * @throws Will log an error message if the fetch request fails.
+   */
   const handleRefreshBalance = async () => {
     try {
       const response = await fetch('/api/users');
@@ -70,6 +77,14 @@ export default function Web() {
     }
   };
 
+  /**
+ * Sends Satoshi tokens from one user to another.
+ * @param {string} senderId - The ID of the sender.
+ * @param {string} receiverId - The ID of the receiver.
+ * @param {number} amount - The amount of tokens to send.
+ * @returns {Promise<string>} - A message indicating the result of the operation.
+ * @throws Will throw an error if the request fails.
+ */
   const sendSatoshi = async (senderId: string, receiverId: string, amount: number) => {
     try {
       const response = await fetch('/api/satsend/send', {
@@ -86,6 +101,11 @@ export default function Web() {
     }
   };
 
+  /**
+   * Provides Satoshi tokens to a user from the faucet.
+   * @param {string} userId - The ID of the user to receive the tokens.
+   * @throws Will throw an error if the request fails.
+   */
   const faucetSatoshi = async (userId: string) => {
     try {
       await fetch('/api/satsend/faucet', {
@@ -96,7 +116,6 @@ export default function Web() {
         body: JSON.stringify({ userId: userId }),
       });
       handleRefreshBalance();
-
     } catch (error) {
       console.error('Failed to provide faucet satoshi:', error);
       throw error;

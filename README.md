@@ -1,3 +1,7 @@
+# Satoshi Token Transfer App
+
+## Description
+A web application to transfer Satoshi tokens between users.
 
 ## Setup
 This starter kit is using turborepo and yarn workspaces for monorepo workflow.
