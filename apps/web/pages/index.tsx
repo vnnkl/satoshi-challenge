@@ -156,8 +156,9 @@ export default function Web() {
       <div className="flex flex-row items-center space-x-2">
         <h1>Your Balance: {currentUser.balance ?? "Loading..."}</h1>
         <button
-          className="pointer-events-auto rounded-md bg-indigo-600 px-3 py-2 text-[0.8125rem] font-semibold leading-5 text-white hover:bg-indigo-500"
+          className={`pointer-events-auto rounded-md px-3 py-2 text-[0.8125rem] font-semibold leading-5 text-white ${currentUser.balance > 0 ? "bg-gray-400" : "bg-indigo-600 hover:bg-indigo-500"}`}
           onClick={() => faucetSatoshi(currentUser.id)}
+          disabled={currentUser.balance > 0}
         >
           Gift me some!
         </button>
@@ -197,8 +198,20 @@ export default function Web() {
             onChange={(e) => setAmount(e.target.value.replace(/\D/g, ''))}
             className="border p-2"
           />
-          <button className="pointer-events-auto rounded-md bg-indigo-600 px-3 py-2 text-[0.8125rem] font-semibold leading-5 text-white hover:bg-indigo-500"
-            onClick={handleSendTokens}>Send</button>
+          <button
+            className={`pointer-events-auto rounded-md px-3 py-2 text-[0.8125rem] font-semibold leading-5 text-white ${!senderId || !amount || users.find((user) => user.id === senderId)?.balance < parseInt(amount)
+              ? "bg-gray-400"
+              : "bg-indigo-600 hover:bg-indigo-500"
+              }`}
+            onClick={handleSendTokens}
+            disabled={
+              !senderId ||
+              !amount ||
+              users.find((user) => user.id === senderId)?.balance < parseInt(amount)
+            }
+          >
+            Send
+          </button>
         </div>
         {error && <p style={{ color: "red" }}>{error}</p>}
 
