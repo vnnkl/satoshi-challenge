@@ -50,12 +50,25 @@ export default function Web() {
     fetchUsers();
   }, []);
 
+  useEffect(() => {
+    const updateCurrentUserBalance = () => {
+      const currentUserData = users.find(user => user.id === currentUser.id);
+      const currentUserBalance = currentUserData ? currentUserData.balance : 0;
+      setCurrentUser(prevState => ({ ...prevState, balance: currentUserBalance }));
+    };
+
+    updateCurrentUserBalance();
+  }, [users]);
+
   const handleRefreshBalance = async () => {
     try {
       const response = await fetch('/api/users');
       const data = await response.json();
       console.log('data from handleRefreshBalance', data);
       setUsers(data.users);
+      const currentUserData = users.find(user => user.id === currentUser.id);
+      const currentUserBalance = currentUserData ? currentUserData.balance : 0;
+      setCurrentUser({ id: currentUser.id, balance: currentUserBalance });
     } catch (error) {
       console.error('Failed to fetch users:', error);
     }
@@ -122,16 +135,15 @@ export default function Web() {
   const faucetSatoshi = async (userId: string) => {
     console.log('faucetSatoshi', userId);
     try {
-      const response = await fetch('/api/satsend/faucet', {
+      await fetch('/api/satsend/faucet', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ userId: userId }),
       });
-      console.log('faucetSatoshi response', response);
-      const data = await response.json();
-      return data.message;
+      handleRefreshBalance();
+
     } catch (error) {
       console.error('Failed to provide faucet satoshi:', error);
       throw error;
