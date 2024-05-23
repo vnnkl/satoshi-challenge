@@ -12,7 +12,6 @@ export default async function handler(
   try {
     const response = await fetch("http://localhost:5002/satsend/users");
     if (!response.ok) {
-      console.log(response);
       throw new Error("Failed to fetch users");
     }
     const data = await response.json();

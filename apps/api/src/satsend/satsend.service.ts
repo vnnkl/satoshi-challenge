@@ -57,7 +57,6 @@ export class SatsendService {
   }
 
   async getUsers(): Promise<{ id: string; balance: number }[]> {
-    logger.log('Fetching users from the database');
     let users;
     try {
       users = await this.userRepository.find();
@@ -73,7 +72,6 @@ export class SatsendService {
   }
 
   async faucetSatoshi(userId: string): Promise<{ message: string }> {
-    logger.log('Faucet satoshi called for user:', userId);
     const user = await this.userRepository.findOne({
       where: { id: userId },
     });

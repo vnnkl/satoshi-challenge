@@ -20,7 +20,6 @@ export default async function handler(
     });
 
     if (!response.ok) {
-      console.log(response);
       throw new Error("Failed to send satoshi");
     }
 

@@ -37,9 +37,7 @@ export default function Web() {
     const fetchUsers = async () => {
       try {
         const response = await fetch('/api/users');
-        console.log('fetchUsers response', response);
         const data = await response.json();
-        console.log('data from fetchUsers', data);
         setUsers(data.users);
       } catch (error) {
         console.error('Failed to fetch users:', error);
@@ -63,7 +61,6 @@ export default function Web() {
     try {
       const response = await fetch('/api/users');
       const data = await response.json();
-      console.log('data from handleRefreshBalance', data);
       setUsers(data.users);
       const currentUserData = users.find(user => user.id === currentUser.id);
       const currentUserBalance = currentUserData ? currentUserData.balance : 0;
@@ -82,17 +79,14 @@ export default function Web() {
         },
         body: JSON.stringify({ senderId, receiverId, amount }),
       });
-      console.log("sendSatoshi response", response);
       const data = await response.json();
       return data.message;
     } catch (error) {
-      console.error('Failed to send satoshi:', error);
       throw error;
     }
   };
 
   const faucetSatoshi = async (userId: string) => {
-    console.log('faucetSatoshi', userId);
     try {
       await fetch('/api/satsend/faucet', {
         method: 'POST',
