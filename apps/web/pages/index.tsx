@@ -11,7 +11,12 @@ export default function Web() {
   const [amount, setAmount] = useState("");
   const [error, setError] = useState("");
   const [users, setUsers] = useState([]);
+  const [currentUser, setCurrentUser] = useState({ id: "", balance: 0 });
   const [fetchUsersData, setFetchUsersData] = useState({ loading: false, error: null });
+
+  useEffect(() => {
+    setCurrentUser({ id: uuidv4(), balance: 0 });
+  }, []);
 
   const handleSendTokens = async () => {
     if (!Number.isInteger(Number(amount)) || Number(amount) <= 0) {
@@ -35,7 +40,7 @@ export default function Web() {
       try {
         const response = await fetch('/api/users');
         const data = await response.json();
-        console.log(data);
+        console.log('data from fetchUsers', data);
         setUsers(data.users);
       } catch (error) {
         console.error('Failed to fetch users:', error);
@@ -45,13 +50,110 @@ export default function Web() {
     fetchUsers();
   }, []);
 
-  console.log(users);
+  const handleRefreshBalance = async () => {
+    try {
+      const response = await fetch('/api/users');
+      const data = await response.json();
+      console.log('data from handleRefreshBalance', data);
+      setUsers(data.users);
+    } catch (error) {
+      console.error('Failed to fetch users:', error);
+    }
+  };
+
+  const handleCreateUser = async () => {
+    try {
+      const response = await fetch('/api/users', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ id: senderId, balance: Number(amount) }),
+      });
+      const data = await response.json();
+      console.log(data);
+      setUsers([...users, { id: senderId, balance: Number(amount) }]);
+    } catch (error) {
+      console.error('Failed to create user:', error);
+    }
+  };
+
+
+  const fetchBalance = async (userId: string) => {
+    try {
+      const response = await fetch(`/api/satsend/balance/${userId}`);
+      const data = await response.json();
+      return data.balance;
+    } catch (error) {
+      console.error('Failed to fetch balance:', error);
+      throw error;
+    }
+  };
+
+  const sendSatoshi = async (senderId: string, receiverId: string, amount: number) => {
+    try {
+      const response = await fetch('/api/satsend/send', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ senderId, receiverId, amount }),
+      });
+      const data = await response.json();
+      return data.message;
+    } catch (error) {
+      console.error('Failed to send satoshi:', error);
+      throw error;
+    }
+  };
+
+  const fetchUsers = async () => {
+    try {
+      const response = await fetch('/api/satsend/users');
+      const data = await response.json();
+      return data.users;
+    } catch (error) {
+      console.error('Failed to fetch users:', error);
+      throw error;
+    }
+  };
+
+  const faucetSatoshi = async (userId: string) => {
+    console.log('faucetSatoshi', userId);
+    try {
+      const response = await fetch('/api/satsend/faucet', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ userId: userId }),
+      });
+      const data = await response.json();
+      return data.message;
+    } catch (error) {
+      console.error('Failed to provide faucet satoshi:', error);
+      throw error;
+    }
+  };
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen space-y-4">
-      <h1>Your ID: {users[0]?.id ?? "Loading..."}</h1>
-      <h1>Your Balance: {users[0]?.balance ?? "Loading..."}</h1>
-      <Button>Refresh Balance</Button>
+      <h1>Your ID: {currentUser.id ?? "Loading..."}</h1>
+      <div className="flex flex-row items-center space-x-2">
+        <h1>Your Balance: {currentUser.balance ?? "Loading..."}</h1>
+        <button
+          className="pointer-events-auto rounded-md bg-indigo-600 px-3 py-2 text-[0.8125rem] font-semibold leading-5 text-white hover:bg-indigo-500"
+          onClick={() => faucetSatoshi(currentUser.id)}
+        >
+          Gift me some!
+        </button>
+      </div>
+      <button
+        className="pointer-events-auto rounded-md bg-indigo-600 px-3 py-2 text-[0.8125rem] font-semibold leading-5 text-white hover:bg-indigo-500"
+        onClick={handleRefreshBalance}
+      >
+        Refresh Balance
+      </button>
       <div className="space-y-2">
         <h2>Send Satoshi Tokens</h2>
         <div className="flex space-x-2">

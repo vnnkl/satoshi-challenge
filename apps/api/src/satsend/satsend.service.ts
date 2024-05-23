@@ -60,7 +60,7 @@ export class SatsendService {
     logger.log('Fetching users from the database');
     let users;
     try {
-      users = await this.userRepository.query('SELECT * FROM user');
+      users = await this.userRepository.find();
       logger.log('Users fetched:', users);
     } catch (error) {
       logger.error('Error fetching users:', error);
@@ -73,12 +73,15 @@ export class SatsendService {
   }
 
   async faucetSatoshi(userId: string): Promise<{ message: string }> {
+    logger.log('Faucet satoshi called for user:', userId);
     const user = await this.userRepository.findOne({
       where: { id: userId },
     });
 
     if (!user) {
-      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+      const newUser = this.userRepository.create({ id: userId, balance: 5 });
+      await this.userRepository.save(newUser);
+      return { message: 'User created with a balance of 5 satoshi' };
     }
 
     if (user.balance > 0) {

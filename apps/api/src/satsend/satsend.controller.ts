@@ -6,9 +6,11 @@ import {
   Param,
   HttpException,
   HttpStatus,
+  Logger,
 } from '@nestjs/common';
 import { SatsendService } from './satsend.service';
 
+const logger = new Logger('SatSendController');
 @Controller('satsend')
 export class SatsendController {
   constructor(private readonly satsendService: SatsendService) {}
@@ -69,6 +71,7 @@ export class SatsendController {
   async faucetSatoshi(
     @Body('userId') userId: string,
   ): Promise<{ message: string }> {
+    logger.log('controller - faucetSatoshi called with userId: ', userId);
     try {
       const result = await this.satsendService.faucetSatoshi(userId);
       return result;
