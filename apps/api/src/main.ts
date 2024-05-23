@@ -9,8 +9,8 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   const config = new DocumentBuilder()
-    .setTitle('Leaves Tracker')
-    .setDescription('Api Docs for leaves tracker')
+    .setTitle('Satoshi Sender')
+    .setDescription('Api Docs for Sastoshi Sender')
     .setVersion('1.0')
     .build();
 
