@@ -19,7 +19,7 @@ import { Transaction } from './satsend/entities/transaction.entity';
       type: 'postgres',
       url: process.env.DATABASE_URL,
       entities: [User, Transaction],
-      synchronize: false,
+      synchronize: true,
     }),
     TypeOrmModule.forFeature([User, Transaction]),
     PersistenceModule,

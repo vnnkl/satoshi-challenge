@@ -43,7 +43,7 @@ export class SatsendController {
 
     try {
       await this.satsendService.sendSatoshi(senderId, receiverId, amount);
-      return { message: 'Satoshi sent successfully' };
+      return { message: 'satoshi sent successfully' };
     } catch (error) {
       throw new HttpException(
         'Failed to send satoshi',
@@ -59,7 +59,7 @@ export class SatsendController {
       return { users };
     } catch (error) {
       throw new HttpException(
-        'Failed to get users',
+        'Failed to get users from service',
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }

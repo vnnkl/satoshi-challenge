@@ -19,6 +19,7 @@ async function bootstrap() {
 
   const PORT = 5002;
 
+  app.enableCors();
   await app.listen(PORT);
 
   if (module.hot) {

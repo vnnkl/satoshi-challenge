@@ -1,9 +1,10 @@
-import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import { Transaction } from './entities/transaction.entity';
 
+const logger = new Logger('SatSendService');
 @Injectable()
 export class SatsendService {
   constructor(
@@ -12,7 +13,6 @@ export class SatsendService {
     @InjectRepository(Transaction)
     private readonly transactionRepository: Repository<Transaction>,
   ) {}
-
   async getBalance(userId: string): Promise<number> {
     const user = await this.userRepository.findOne({ where: { id: userId } });
     if (!user) {
@@ -57,7 +57,18 @@ export class SatsendService {
   }
 
   async getUsers(): Promise<{ id: string; balance: number }[]> {
-    const users = await this.userRepository.find();
+    logger.log('Fetching users from the database');
+    let users;
+    try {
+      users = await this.userRepository.find();
+      logger.log('Users fetched:', users);
+    } catch (error) {
+      logger.error('Error fetching users:', error);
+      throw new HttpException(
+        'Failed to fetch users from the database',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
     return users.map((user) => ({ id: user.id, balance: user.balance }));
   }
 }
