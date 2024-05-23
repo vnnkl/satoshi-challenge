@@ -60,7 +60,7 @@ export class SatsendService {
     logger.log('Fetching users from the database');
     let users;
     try {
-      users = await this.userRepository.find();
+      users = await this.userRepository.query('SELECT * FROM user');
       logger.log('Users fetched:', users);
     } catch (error) {
       logger.error('Error fetching users:', error);
@@ -70,5 +70,27 @@ export class SatsendService {
       );
     }
     return users.map((user) => ({ id: user.id, balance: user.balance }));
+  }
+
+  async faucetSatoshi(userId: string): Promise<{ message: string }> {
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+    });
+
+    if (!user) {
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    }
+
+    if (user.balance > 0) {
+      throw new HttpException(
+        'User already has a balance',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    user.balance = 5;
+    await this.userRepository.save(user);
+
+    return { message: 'User balance updated to 5 satoshi' };
   }
 }

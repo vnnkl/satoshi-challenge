@@ -64,4 +64,19 @@ export class SatsendController {
       );
     }
   }
+
+  @Post('faucet')
+  async faucetSatoshi(
+    @Body('userId') userId: string,
+  ): Promise<{ message: string }> {
+    try {
+      const result = await this.satsendService.faucetSatoshi(userId);
+      return result;
+    } catch (error) {
+      throw new HttpException(
+        'Failed to provide faucet satoshi',
+        HttpStatus.I_AM_A_TEAPOT,
+      );
+    }
+  }
 }
